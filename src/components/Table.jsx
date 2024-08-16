@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-function Body() {
+function Table() {
     return (
         <>
 
@@ -8,4 +8,4 @@ function Body() {
     )
 }
 
-export default Body
+export default Table

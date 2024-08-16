@@ -1,14 +1,14 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import UserProvider from './context/Context';
 
 function App() {
-
   return (
-    <>
+    <UserProvider>
+      <>
+        <h1>Hello world</h1>
+      </>
+    </UserProvider>
 
-    </>
   )
 }
 
