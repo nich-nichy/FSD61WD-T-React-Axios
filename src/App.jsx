@@ -13,7 +13,7 @@ function App() {
           <Table />
         </div>
       </>
-    </UserProvider>
+    </UserProvider >
 
   )
 }

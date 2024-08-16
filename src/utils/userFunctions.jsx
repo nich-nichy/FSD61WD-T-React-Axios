@@ -8,7 +8,7 @@ class UserFunctions {
     fetchUsers = async (users) => {
         if (!users || users.length === 0) {
             const readUsers = await axios.get(providedUrl);
-            console.log({ fromFetch: readUsers.data });
+            // console.log({ fromFetch: readUsers.data });
             return readUsers.data;
         }
         return users;
