@@ -1,16 +1,27 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
-import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+import React, { useContext, useEffect, useState, useMemo } from 'react';
+import { AgGridReact } from 'ag-grid-react';
+import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { UserContext } from '../context/UserContext';
 import userFunctions from '../utils/userFunctions';
+import EditCellRenderer from './EditCell';
+import DeleteCellRenderer from './DeleteCell';
+import { FaPen } from "react-icons/fa";
+
 
 const Table = () => {
-    const initialColDefs = [];
+    const { users, setUsers } = useContext(UserContext);
+    const initialColDefs = [
+        {
+            field: "edit", width: 70, pinned: "right", cellRenderer: EditCellRenderer
+        },
+        { field: "delete", width: 90, pinned: "right", cellRenderer: DeleteCellRenderer }
+    ];
     const initialRowData = [];
     const [hasRunOnce, setHasRunOnce] = useState(false);
-    const { users, setUsers } = useContext(UserContext); console.log({ users }, "from table")
-    console.log({ users }, "from table")
+    const [rowData, setRowData] = useState(initialRowData);
+    const [colDefs, setColDefs] = useState(initialColDefs);
+
     useEffect(() => {
         const fetchedData = async () => {
             const data = await userFunctions.fetchUsers(users);
@@ -19,20 +30,38 @@ const Table = () => {
         fetchedData();
     }, []);
 
-    const processUserKeys = (type) => {
+    const processUserKeys = (user) => {
         const subKeyArr = [];
-        Object.keys(type)?.forEach((key) => {
-            if (typeof type[key] === 'object' && type[key] !== null) {
-                // Handle nested objects
-                Object.keys(type[key]).forEach((subKey) => {
-                    subKeyArr.push(`${key}.${subKey}`);
-                });
-            } else {
-                subKeyArr.push(key);
-            }
-        });
-
+        const traverseObject = (obj, parentKey = '') => {
+            Object.keys(obj).forEach((key) => {
+                const fullKey = parentKey ? `${parentKey} ${key}` : key;
+                if (typeof obj[key] === 'object' && obj[key] !== null) {
+                    traverseObject(obj[key], fullKey);
+                } else {
+                    subKeyArr.push(fullKey);
+                }
+            });
+        };
+        traverseObject(user);
+        console.log({ subKeyArr }, "Array of subkeys");
         return subKeyArr;
+    };
+
+    const processUserValues = (user) => {
+        const flattenedUser = {};
+        const traverseObject = (obj, parentKey = '') => {
+            Object.keys(obj).forEach((key) => {
+                const fullKey = parentKey ? `${parentKey} ${key}` : key;
+                if (typeof obj[key] === 'object' && obj[key] !== null) {
+                    traverseObject(obj[key], fullKey);
+                } else {
+                    console.log({ fullKey }, "Full Key");
+                    flattenedUser[fullKey] = obj[key];
+                }
+            });
+        };
+        traverseObject(user);
+        return flattenedUser;
     };
 
     useEffect(() => {
@@ -41,46 +70,32 @@ const Table = () => {
             userKeys.forEach((key) => {
                 addFieldToColDefs(key);
             });
+            const flattenedUsers = users.map(user => processUserValues(user));
+            console.log("Flattened Users: ", flattenedUsers);
+            setRowData(flattenedUsers);
             setHasRunOnce(true);
         }
     }, [users, hasRunOnce]);
-
-    useEffect(() => {
-        let setData = {}
-        if (users?.length > 0) {
-
-        }
-        setRowData();
-    }, []);
-
-    // Rows
-    // const [rowData, setRowData] = useState([
-    //     { make: "Tesla", model: "Model Y", price: 64950, electric: true },
-    //     { make: "Ford", model: "F-Series", price: 33850, electric: false },
-    //     { make: "Toyota", model: "Corolla", price: 29600, electric: false },
-    // ]);
-    const [rowData, setRowData] = useState(initialRowData);
-
-    // Columns
-    const [colDefs, setColDefs] = useState(initialColDefs);
 
     const addFieldToColDefs = (fieldName) => {
         setColDefs(prev => [...prev, { field: fieldName }]);
     };
 
+    const defaultColDef = useMemo(() => {
+        return {
+            editable: true,
+        };
+    }, []);
+
     return (
-        <div
-            className="ag-theme-quartz-dark"
-            style={{ height: 500 }}
-        >
+        <div className="ag-theme-quartz-dark" style={{ height: 500 }}>
             <AgGridReact
                 rowData={rowData}
                 columnDefs={colDefs}
+                defaultColDef={defaultColDef}
             />
         </div>
-    )
-
+    );
 }
 
-export default Table
-
+export default Table;
