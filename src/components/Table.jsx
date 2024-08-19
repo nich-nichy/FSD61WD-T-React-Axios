@@ -32,35 +32,35 @@ const Table = () => {
 
     const processUserKeys = (user) => {
         const subKeyArr = [];
-        const traverseObject = (obj, parentKey = '') => {
+        const changeObjectStructure = (obj, parentKey = '') => {
             Object.keys(obj).forEach((key) => {
                 const fullKey = parentKey ? `${parentKey} ${key}` : key;
                 if (typeof obj[key] === 'object' && obj[key] !== null) {
-                    traverseObject(obj[key], fullKey);
+                    changeObjectStructure(obj[key], fullKey);
                 } else {
                     subKeyArr.push(fullKey);
                 }
             });
         };
-        traverseObject(user);
+        changeObjectStructure(user);
         console.log({ subKeyArr }, "Array of subkeys");
         return subKeyArr;
     };
 
     const processUserValues = (user) => {
         const flattenedUser = {};
-        const traverseObject = (obj, parentKey = '') => {
+        const changeObjectStructure = (obj, parentKey = '') => {
             Object.keys(obj).forEach((key) => {
                 const fullKey = parentKey ? `${parentKey} ${key}` : key;
                 if (typeof obj[key] === 'object' && obj[key] !== null) {
-                    traverseObject(obj[key], fullKey);
+                    changeObjectStructure(obj[key], fullKey);
                 } else {
                     console.log({ fullKey }, "Full Key");
                     flattenedUser[fullKey] = obj[key];
                 }
             });
         };
-        traverseObject(user);
+        changeObjectStructure(user);
         return flattenedUser;
     };
 
@@ -83,7 +83,7 @@ const Table = () => {
 
     const defaultColDef = useMemo(() => {
         return {
-            editable: true,
+            editable: false,
         };
     }, []);
 
