@@ -12,7 +12,7 @@ function App() {
       <>
         <div className="poppins-medium m-5 mt-3">
           <h2 className='text-center p-2'>Crud</h2>
-          <button className="btn btn-primary m-2 ms-0" data-bs-toggle="modal" data-bs-target="#userModal">
+          <button type="button" className="btn btn-primary m-2 ms-0" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
             Add User
           </button>
           <Model />

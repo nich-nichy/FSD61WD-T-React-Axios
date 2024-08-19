@@ -55,7 +55,6 @@ const Table = () => {
                 if (typeof obj[key] === 'object' && obj[key] !== null) {
                     changeObjectStructure(obj[key], fullKey);
                 } else {
-                    console.log({ fullKey }, "Full Key");
                     flattenedUser[fullKey] = obj[key];
                 }
             });
