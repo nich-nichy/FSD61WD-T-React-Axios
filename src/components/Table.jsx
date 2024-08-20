@@ -10,7 +10,7 @@ import Button from 'react-bootstrap/Button';
 import Model from './Model';
 
 const Table = () => {
-    const { users, setUsers, setModel, newOneAdded, isNewOneAdded } = useContext(UserContext);
+    const { users, setUsers, setModel, newOneAdded, isNewOneAdded, currentMode, setCurrentMode, setDataToEdit } = useContext(UserContext);
     const initialColDefs = [
         {
             field: "edit", width: 70, pinned: "right", cellRenderer: EditCellRenderer
@@ -24,6 +24,8 @@ const Table = () => {
     useEffect(() => {
         const fetchedData = async () => {
             const data = await userFunctions.fetchUsers(users);
+            setDataToEdit(null);
+            setCurrentMode('add');
             setUsers(data);
         }
         fetchedData();
@@ -113,10 +115,13 @@ const Table = () => {
             {/* <button type="button" className="btn btn-primary m-2 ms-0" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                 Add User
             </button> */}
-            <Button variant="primary" className="btn btn-primary m-2 ms-0" onClick={() => { setModel(true) }}>
+            <Button variant="primary" className="btn btn-primary m-2 ms-0" onClick={() => {
+                setModel(true)
+                setCurrentMode('add');
+            }}>
                 Add User
             </Button>
-            <Model />
+            <Model mode={currentMode} />
             <div className="ag-theme-quartz-dark" style={{ height: 500 }}>
                 <AgGridReact
                     rowData={rowData}

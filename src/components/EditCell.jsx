@@ -1,10 +1,19 @@
-import React from 'react';
+import { useContext } from 'react';
+import Model from './Model'
+import { UserContext } from '../context/UserContext';
 import { FaPen } from "react-icons/fa";
 
 const EditCellRenderer = (props) => {
+    const { setModel, setDataToEdit } = useContext(UserContext);
+    const handleEdit = () => {
+        const { data } = props;
+        setModel(true);
+        setDataToEdit(data);
+    }
     return (
         <div>
-            <FaPen onClick={() => alert('Edit clicked!')} style={{ cursor: 'pointer' }} className="text-success" />
+            <FaPen onClick={() => handleEdit()} style={{ cursor: 'pointer' }} className="text-success" />
+            <Model mode={"edit"} />
         </div>
     );
 };
