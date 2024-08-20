@@ -10,7 +10,7 @@ import Modal from 'react-bootstrap/Modal';
 import { UserContext } from '../context/UserContext';
 
 const Model = () => {
-    const { showModel, setModel } = useContext(UserContext);
+    const { setUsers, showModel, setModel, isNewOneAdded } = useContext(UserContext);
     const handleClose = () => {
         setModel(false);
     };
@@ -67,18 +67,25 @@ const Model = () => {
                         onSubmit={async (values) => {
                             console.log(values);
                             try {
-                                const data = await userFunctions.addUser(values);
-                                console.log(data)
-                                if (data) {
-                                    Swal.fire({
-                                        title: 'Form Submitted!',
-                                        text: `User Created Successfully!`,
-                                        icon: 'success',
-                                        confirmButtonText: 'OK'
-                                    }).then(() => {
-
+                                const response = await userFunctions.addUser(values);
+                                const { data } = response;
+                                Swal.fire({
+                                    title: 'Form Submitted!',
+                                    text: 'User Created Successfully!',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then(() => {
+                                    setUsers((oldData) => {
+                                        const newId = oldData.length + 1;
+                                        const newUser = { ...data, id: newId };
+                                        return [
+                                            ...oldData,
+                                            newUser
+                                        ];
                                     });
-                                }
+                                    handleClose();
+                                    isNewOneAdded(true);
+                                });
                             } catch (error) {
                                 console.log(error);
                                 Swal.fire({
@@ -86,7 +93,10 @@ const Model = () => {
                                     text: `User Creation Failed!`,
                                     icon: 'error',
                                     confirmButtonText: 'OK'
-                                });
+                                }).then(() => {
+                                    handleClose();
+                                    isNewOneAdded(false);
+                                });;
                             }
                         }}
                     >
