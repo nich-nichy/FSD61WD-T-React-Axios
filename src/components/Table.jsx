@@ -121,7 +121,7 @@ const Table = () => {
             }}>
                 Add User
             </Button>
-            <Model mode={currentMode} />
+            <Model />
             <div className="ag-theme-quartz-dark" style={{ height: 500 }}>
                 <AgGridReact
                     rowData={rowData}

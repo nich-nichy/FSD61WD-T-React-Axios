@@ -4,8 +4,9 @@ import { UserContext } from '../context/UserContext';
 import { FaPen } from "react-icons/fa";
 
 const EditCellRenderer = (props) => {
-    const { setModel, setDataToEdit } = useContext(UserContext);
+    const { setModel, setDataToEdit, setCurrentMode } = useContext(UserContext);
     const handleEdit = () => {
+        setCurrentMode('edit');
         const { data } = props;
         setModel(true);
         setDataToEdit(data);
@@ -13,7 +14,7 @@ const EditCellRenderer = (props) => {
     return (
         <div>
             <FaPen onClick={() => handleEdit()} style={{ cursor: 'pointer' }} className="text-success" />
-            <Model mode={"edit"} />
+            <Model />
         </div>
     );
 };

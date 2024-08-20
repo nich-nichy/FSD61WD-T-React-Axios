@@ -9,14 +9,14 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { UserContext } from '../context/UserContext';
 
-const Model = ({ mode }) => {
-    const { setUsers, showModel, setModel, isNewOneAdded, dataToEdit, setDataToEdit, setCurrentMode } = useContext(UserContext);
+const Model = () => {
+    const { setUsers, showModel, setModel, isNewOneAdded, dataToEdit, setDataToEdit, setCurrentMode, currentMode } = useContext(UserContext);
     const handleClose = () => {
         setModel(false);
         setDataToEdit(null);
         setCurrentMode('add');
     };
-    console.log(mode)
+    console.log(currentMode)
     return (
         <div>
             <Modal
@@ -27,21 +27,21 @@ const Model = ({ mode }) => {
                 className="bg-dark"
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>{mode?.toLowerCase()?.includes('add') ? "Add User" : "Edit User"}</Modal.Title>
+                    <Modal.Title>{currentMode?.toLowerCase()?.includes('add') ? "Add User" : "Edit User"}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Formik
                         initialValues={{
-                            name: `${mode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.name}`,
-                            username: `${mode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.username}`,
-                            email: `${mode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.email}`,
-                            addressStreet: `${mode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.length > 0 ? dataToEdit['address street'] : ''}`,
-                            addressSuite: `${mode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.length > 0 ? dataToEdit['address suite'] : ''}`,
-                            addressCity: `${mode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.length > 0 ? dataToEdit['address city'] : ''}`,
-                            phone: `${mode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.phone}`,
-                            website: `${mode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.website}`,
-                            companyName: `${mode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.length > 0 ? dataToEdit['company name'] : ''}`,
-                            companyCatchPhrase: `${mode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.length > 0 ? dataToEdit['company catchPhrase'] : ''}`
+                            name: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.name}`,
+                            username: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.username}`,
+                            email: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.email}`,
+                            addressStreet: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit['address street']}`,
+                            addressSuite: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit['address suite']}`,
+                            addressCity: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit['address city']}`,
+                            phone: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.phone}`,
+                            website: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.website}`,
+                            companyName: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit['company name']}`,
+                            companyCatchPhrase: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit['company catchPhrase']}`
                         }}
                         validationSchema={Yup.object().shape({
                             name: Yup.string()
@@ -146,7 +146,7 @@ const Model = ({ mode }) => {
                                     <Button variant="secondary" onClick={handleClose}>
                                         Close
                                     </Button>
-                                    {mode?.toLowerCase()?.includes('add') ? <Button variant="primary" type='submit'>
+                                    {currentMode?.toLowerCase()?.includes('add') ? <Button variant="primary" type='submit'>
                                         Save
                                     </Button> : <Button variant="primary" type='submit'>
                                         Edit
