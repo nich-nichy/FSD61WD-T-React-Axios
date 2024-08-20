@@ -32,36 +32,55 @@ const Table = () => {
 
     const processUserKeys = (user) => {
         const subKeyArr = [];
+
         const changeObjectStructure = (obj, parentKey = '') => {
             Object.keys(obj).forEach((key) => {
                 const fullKey = parentKey ? `${parentKey} ${key}` : key;
+
                 if (typeof obj[key] === 'object' && obj[key] !== null) {
+                    if (key.toLowerCase().includes("geo")) {
+                        return;
+                    }
                     changeObjectStructure(obj[key], fullKey);
                 } else {
+                    if (fullKey.toLowerCase() === "company bs") {
+                        return;
+                    }
                     subKeyArr.push(fullKey);
                 }
             });
         };
+
         changeObjectStructure(user);
-        console.log({ subKeyArr }, "Array of subkeys");
         return subKeyArr;
     };
 
+
     const processUserValues = (user) => {
         const flattenedUser = {};
+
         const changeObjectStructure = (obj, parentKey = '') => {
             Object.keys(obj).forEach((key) => {
                 const fullKey = parentKey ? `${parentKey} ${key}` : key;
+
                 if (typeof obj[key] === 'object' && obj[key] !== null) {
+                    if (key.toLowerCase().includes("geo")) {
+                        return;
+                    }
                     changeObjectStructure(obj[key], fullKey);
                 } else {
+                    if (fullKey.toLowerCase() === "company bs") {
+                        return;
+                    }
                     flattenedUser[fullKey] = obj[key];
                 }
             });
         };
+
         changeObjectStructure(user);
         return flattenedUser;
     };
+
 
     useEffect(() => {
         if (!hasRunOnce && users.length > 0) {
