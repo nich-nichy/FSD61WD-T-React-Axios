@@ -6,11 +6,11 @@ import { UserContext } from '../context/UserContext';
 import userFunctions from '../utils/userFunctions';
 import EditCellRenderer from './EditCell';
 import DeleteCellRenderer from './DeleteCell';
-import { FaPen } from "react-icons/fa";
-
+import Button from 'react-bootstrap/Button';
+import Model from './Model';
 
 const Table = () => {
-    const { users, setUsers } = useContext(UserContext);
+    const { users, setUsers, setModel } = useContext(UserContext);
     const initialColDefs = [
         {
             field: "edit", width: 70, pinned: "right", cellRenderer: EditCellRenderer
@@ -21,7 +21,6 @@ const Table = () => {
     const [hasRunOnce, setHasRunOnce] = useState(false);
     const [rowData, setRowData] = useState(initialRowData);
     const [colDefs, setColDefs] = useState(initialColDefs);
-
     useEffect(() => {
         const fetchedData = async () => {
             const data = await userFunctions.fetchUsers(users);
@@ -32,11 +31,9 @@ const Table = () => {
 
     const processUserKeys = (user) => {
         const subKeyArr = [];
-
         const changeObjectStructure = (obj, parentKey = '') => {
             Object.keys(obj).forEach((key) => {
                 const fullKey = parentKey ? `${parentKey} ${key}` : key;
-
                 if (typeof obj[key] === 'object' && obj[key] !== null) {
                     if (key.toLowerCase().includes("geo")) {
                         return;
@@ -106,12 +103,21 @@ const Table = () => {
     }, []);
 
     return (
-        <div className="ag-theme-quartz-dark" style={{ height: 500 }}>
-            <AgGridReact
-                rowData={rowData}
-                columnDefs={colDefs}
-                defaultColDef={defaultColDef}
-            />
+        <div>
+            {/* <button type="button" className="btn btn-primary m-2 ms-0" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                Add User
+            </button> */}
+            <Button variant="primary" className="btn btn-primary m-2 ms-0" onClick={() => { setModel(true) }}>
+                Add User
+            </Button>
+            <Model />
+            <div className="ag-theme-quartz-dark" style={{ height: 500 }}>
+                <AgGridReact
+                    rowData={rowData}
+                    columnDefs={colDefs}
+                    defaultColDef={defaultColDef}
+                />
+            </div>
         </div>
     );
 }

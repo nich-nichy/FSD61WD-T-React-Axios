@@ -14,9 +14,9 @@ class UserFunctions {
         return users;
     };
     // For creating the data from the API (CREATE)
-    addUser = async (id) => {
-        const addUsers = await axios.post(`${mockApiUrl}/:${id}`, id);
-        console.log({ user: addUsers.data })
+    addUser = async (values) => {
+        const addUsers = await axios.post(`${providedUrl}`, values);
+        return addUsers;
     };
     // For updating the data from the API (UPDATE)
     updateUser = async (id) => {
