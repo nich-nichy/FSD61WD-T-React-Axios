@@ -39,8 +39,9 @@ class UserFunctions {
     // For deleting the data from the API (DELETE)
     deleteUser = async (id) => {
         try {
-            const deleteUsers = await axios.delete(`${providedUrl}/${id}`, id);
-            console.log({ user: deleteUsers.data })
+            const deleteUsers = await axios.delete(`${providedUrl}/${id}`);
+            console.log({ delete: deleteUsers })
+            return deleteUsers;
         } catch (error) {
             return error;
         }

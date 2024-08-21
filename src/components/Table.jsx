@@ -10,7 +10,7 @@ import Button from 'react-bootstrap/Button';
 import Model from './Model';
 
 const Table = () => {
-    const { users, setUsers, setModel, newOneAdded, isNewOneAdded, currentMode, setCurrentMode, setDataToEdit } = useContext(UserContext);
+    const { users, setUsers, setModel, newOneAdded, isNewOneAdded, currentMode, setCurrentMode, setDataToEdit, toDelete, setToDelete, dataToDelete, setDataToDelete } = useContext(UserContext);
     const initialColDefs = [
         {
             field: "edit", width: 70, pinned: "right", cellRenderer: EditCellRenderer
@@ -97,8 +97,15 @@ const Table = () => {
             console.log("Flattened Users: ", flattenedUsers);
             setRowData(flattenedUsers);
             isNewOneAdded(false);
+        } else if (toDelete) {
+            const flattenedUsers = users.map(user => processUserValues(user));
+            console.log("This block is triggered and we are in: ", flattenedUsers);
+            setRowData(flattenedUsers);
+            isNewOneAdded(false);
+            setToDelete(false);
+            console.log(dataToDelete)
         }
-    }, [users, hasRunOnce, newOneAdded]);
+    }, [users, hasRunOnce, newOneAdded, toDelete]);
 
     const addFieldToColDefs = (fieldName) => {
         setColDefs(prev => [...prev, { field: fieldName }]);
