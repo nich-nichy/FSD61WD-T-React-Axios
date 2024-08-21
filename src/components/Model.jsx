@@ -17,6 +17,7 @@ const Model = () => {
         setCurrentMode('add');
     };
     console.log(currentMode)
+    const checkMode = currentMode?.toLowerCase()?.includes('add');
     return (
         <div>
             <Modal
@@ -27,21 +28,21 @@ const Model = () => {
                 className="bg-dark"
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>{currentMode?.toLowerCase()?.includes('add') ? "Add User" : "Edit User"}</Modal.Title>
+                    <Modal.Title>{checkMode ? "Add User" : "Edit User"}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Formik
                         initialValues={{
-                            name: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.name}`,
-                            username: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.username}`,
-                            email: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.email}`,
-                            addressStreet: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit['address street']}`,
-                            addressSuite: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit['address suite']}`,
-                            addressCity: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit['address city']}`,
-                            phone: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.phone}`,
-                            website: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit?.website}`,
-                            companyName: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit['company name']}`,
-                            companyCatchPhrase: `${currentMode?.toLowerCase()?.includes('add') ? "" : dataToEdit['company catchPhrase']}`
+                            name: `${checkMode ? "" : dataToEdit?.name}`,
+                            username: `${checkMode ? "" : dataToEdit?.username}`,
+                            email: `${checkMode ? "" : dataToEdit?.email}`,
+                            addressStreet: `${checkMode ? "" : dataToEdit['address street']}`,
+                            addressSuite: `${checkMode ? "" : dataToEdit['address suite']}`,
+                            addressCity: `${checkMode ? "" : dataToEdit['address city']}`,
+                            phone: `${checkMode ? "" : dataToEdit?.phone}`,
+                            website: `${checkMode ? "" : dataToEdit?.website}`,
+                            companyName: `${checkMode ? "" : dataToEdit['company name']}`,
+                            companyCatchPhrase: `${checkMode ? "" : dataToEdit['company catchPhrase']}`
                         }}
                         validationSchema={Yup.object().shape({
                             name: Yup.string()
@@ -70,7 +71,7 @@ const Model = () => {
                         onSubmit={async (values) => {
                             console.log(values);
                             try {
-                                if (currentMode?.toLowerCase()?.includes('add')) {
+                                if (checkMode) {
                                     const response = await userFunctions.addUser(values);
                                     const { data } = response;
                                     Swal.fire({
@@ -170,7 +171,7 @@ const Model = () => {
                                     <Button variant="secondary" onClick={handleClose}>
                                         Close
                                     </Button>
-                                    {currentMode?.toLowerCase()?.includes('add') ? <Button variant="primary" type='submit'>
+                                    {checkMode ? <Button variant="primary" type='submit'>
                                         Save
                                     </Button> : <Button variant="primary" type='submit'>
                                         Edit
