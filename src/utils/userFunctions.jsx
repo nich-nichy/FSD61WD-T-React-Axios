@@ -10,6 +10,7 @@ class UserFunctions {
         try {
             if (!users || users.length === 0) {
                 const readUsers = await axios.get(providedUrl);
+                console.log(readUsers.data, "from function");
                 return readUsers.data;
             }
             return users;

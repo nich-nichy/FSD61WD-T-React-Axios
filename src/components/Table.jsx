@@ -23,6 +23,9 @@ const Table = () => {
     const [hasRunOnce, setHasRunOnce] = useState(false);
     const [rowData, setRowData] = useState(initialRowData);
     const [colDefs, setColDefs] = useState(initialColDefs);
+
+    console.log({ users })
+
     useEffect(() => {
         const fetchedData = async () => {
             const data = await userFunctions.fetchUsers(users);
@@ -80,21 +83,20 @@ const Table = () => {
     };
 
     useEffect(() => {
+        const updateRowData = () => {
+            const flattenedUsers = users.map(user => processUserValues(user));
+            console.log({ flattenedUsers }, 'from row data');
+            setRowData(flattenedUsers);
+        };
         if (!hasRunOnce && users.length > 0) {
             const userKeys = processUserKeys(users[0]);
             userKeys.forEach((key) => {
                 addFieldToColDefs(key);
             });
-            const flattenedUsers = users.map(user => processUserValues(user));
-            setRowData(flattenedUsers);
+            updateRowData();
             setHasRunOnce(true);
-        } else if (newOneAdded) {
-            const flattenedUsers = users.map(user => processUserValues(user));
-            setRowData(flattenedUsers);
-            isNewOneAdded(false);
-        } else if (toDelete) {
-            const flattenedUsers = users.map(user => processUserValues(user));
-            setRowData(flattenedUsers);
+        } else if (newOneAdded || toDelete) {
+            updateRowData();
             isNewOneAdded(false);
             setToDelete(false);
         }
