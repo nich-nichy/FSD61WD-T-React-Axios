@@ -27,10 +27,12 @@ class UserFunctions {
     };
     // For updating the data from the API (UPDATE)
     updateUser = async (id, toUpdate) => {
+        console.log({ id, toUpdate });
         try {
             const updateUsers = await axios.put(`${providedUrl}/${id}`, toUpdate);
             return updateUsers;
         } catch (error) {
+            console.log(error)
             return error;
         }
     };

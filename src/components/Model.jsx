@@ -70,30 +70,54 @@ const Model = () => {
                         onSubmit={async (values) => {
                             console.log(values);
                             try {
-                                const response = await userFunctions.addUser(values);
-                                const { data } = response;
-                                Swal.fire({
-                                    title: 'Form Submitted!',
-                                    text: 'User Created Successfully!',
-                                    icon: 'success',
-                                    confirmButtonText: 'OK'
-                                }).then(() => {
-                                    setUsers((oldData) => {
-                                        const newId = oldData.length + 1;
-                                        const newUser = { ...data, id: newId };
-                                        return [
-                                            ...oldData,
-                                            newUser
-                                        ];
+                                if (currentMode?.toLowerCase()?.includes('add')) {
+                                    const response = await userFunctions.addUser(values);
+                                    const { data } = response;
+                                    Swal.fire({
+                                        title: 'Form Submitted!',
+                                        text: 'User Created Successfully!',
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    }).then(() => {
+                                        setUsers((oldData) => {
+                                            const newId = oldData.length + 1;
+                                            const newUser = { ...data, id: newId };
+                                            return [
+                                                ...oldData,
+                                                newUser
+                                            ];
+                                        });
+                                        handleClose();
+                                        isNewOneAdded(true);
                                     });
-                                    handleClose();
-                                    isNewOneAdded(true);
-                                });
+                                } else if (currentMode?.toLowerCase()?.includes('edit')) {
+                                    const response = await userFunctions.updateUser(dataToEdit.id, values);
+                                    const { data } = response;
+                                    Swal.fire({
+                                        title: 'Form Submitted!',
+                                        text: 'User Edited Successfully!',
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    }).then(() => {
+                                        setUsers((oldData) => {
+                                            const newData = oldData.map((user) => {
+                                                if (user.id === dataToEdit.id) {
+                                                    return { ...user, ...data };
+                                                }
+                                                return user;
+                                            });
+                                            return newData;
+                                        });
+                                        handleClose();
+                                        isNewOneAdded(true);
+                                    });
+                                }
+
                             } catch (error) {
                                 console.log(error);
                                 Swal.fire({
                                     title: 'Form Submission Failed!',
-                                    text: `User Creation Failed!`,
+                                    text: `Oops! Something went wrong.`,
                                     icon: 'error',
                                     confirmButtonText: 'OK'
                                 }).then(() => {

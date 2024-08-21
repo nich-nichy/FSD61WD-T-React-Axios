@@ -1,11 +1,13 @@
 import { useContext } from 'react';
 import Model from './Model'
+import userFunctions from '../utils/userFunctions';
 import { UserContext } from '../context/UserContext';
 import { FaPen } from "react-icons/fa";
+import Swal from 'sweetalert2';
 
 const EditCellRenderer = (props) => {
-    const { setModel, setDataToEdit, setCurrentMode } = useContext(UserContext);
-    const handleEdit = () => {
+    const { setModel, dataToEdit, setDataToEdit, setCurrentMode } = useContext(UserContext);
+    const handleEdit = async () => {
         setCurrentMode('edit');
         const { data } = props;
         setModel(true);
