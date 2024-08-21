@@ -4,11 +4,12 @@ import { UserContext } from '../context/UserContext';
 import userFunctions from '../utils/userFunctions';
 import Swal from 'sweetalert2';
 
+// Delete a user
+
 const DeleteCellRenderer = (props) => {
     const { setUsers, setDataToDelete, setToDelete } = useContext(UserContext);
     const { data } = props;
     const handleDelete = async () => {
-        console.log(props.data);
         Swal.fire({
             title: "Are you sure?",
             text: "You want to delete this!",
@@ -20,7 +21,6 @@ const DeleteCellRenderer = (props) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 const deleteUser = await userFunctions.deleteUser(data.id);
-                console.log({ deleteUser });
                 if (deleteUser?.status === 200) {
                     Swal.fire({
                         title: "Deleted!",
@@ -39,8 +39,6 @@ const DeleteCellRenderer = (props) => {
                 }
             }
         });
-
-
     };
     return (
         <div>

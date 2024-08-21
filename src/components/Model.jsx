@@ -16,7 +16,6 @@ const Model = () => {
         setDataToEdit(null);
         setCurrentMode('add');
     };
-    console.log(currentMode)
     const checkMode = currentMode?.toLowerCase()?.includes('add');
     return (
         <div>
@@ -69,7 +68,7 @@ const Model = () => {
                             companyCatchPhrase: Yup.string().required('Required '),
                         })}
                         onSubmit={async (values) => {
-                            console.log(values);
+                            // console.log(values);
                             try {
                                 if (checkMode) {
                                     const response = await userFunctions.addUser(values);
@@ -81,7 +80,9 @@ const Model = () => {
                                         confirmButtonText: 'OK'
                                     }).then(() => {
                                         setUsers((oldData) => {
-                                            const newId = oldData.length + 1;
+                                            // const newId = oldData.length + 1;
+                                            const lastId = oldData.reduce((maxId, user) => Math.max(maxId, user.id), 0);
+                                            const newId = lastId + 1;
                                             const newUser = { ...data, id: newId };
                                             return [
                                                 ...oldData,
@@ -113,9 +114,7 @@ const Model = () => {
                                         isNewOneAdded(true);
                                     });
                                 }
-
                             } catch (error) {
-                                console.log(error);
                                 Swal.fire({
                                     title: 'Form Submission Failed!',
                                     text: `Oops! Something went wrong.`,

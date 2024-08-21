@@ -2,13 +2,14 @@ import axios from 'axios';
 
 let providedUrl = 'https://jsonplaceholder.typicode.com/users';
 
+// Functions for performing CRUD operations
+
 class UserFunctions {
     // For reading the data from the API (READ)
     fetchUsers = async (users) => {
         try {
             if (!users || users.length === 0) {
                 const readUsers = await axios.get(providedUrl);
-                // console.log({ fromFetch: readUsers.data });
                 return readUsers.data;
             }
             return users;
@@ -27,12 +28,10 @@ class UserFunctions {
     };
     // For updating the data from the API (UPDATE)
     updateUser = async (id, toUpdate) => {
-        console.log({ id, toUpdate });
         try {
             const updateUsers = await axios.put(`${providedUrl}/${id}`, toUpdate);
             return updateUsers;
         } catch (error) {
-            console.log(error)
             return error;
         }
     };
@@ -40,7 +39,6 @@ class UserFunctions {
     deleteUser = async (id) => {
         try {
             const deleteUsers = await axios.delete(`${providedUrl}/${id}`);
-            console.log({ delete: deleteUsers })
             return deleteUsers;
         } catch (error) {
             return error;

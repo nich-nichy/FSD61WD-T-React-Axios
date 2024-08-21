@@ -9,6 +9,8 @@ import DeleteCellRenderer from './DeleteCell';
 import Button from 'react-bootstrap/Button';
 import Model from './Model';
 
+// Table component uses AG GRID - React Grid
+
 const Table = () => {
     const { users, setUsers, setModel, newOneAdded, isNewOneAdded, currentMode, setCurrentMode, setDataToEdit, toDelete, setToDelete, dataToDelete, setDataToDelete } = useContext(UserContext);
     const initialColDefs = [
@@ -31,6 +33,7 @@ const Table = () => {
         fetchedData();
     }, []);
 
+    // To get the keys of the user object for setting in aggrid
     const processUserKeys = (user) => {
         const subKeyArr = [];
         const changeObjectStructure = (obj, parentKey = '') => {
@@ -49,15 +52,13 @@ const Table = () => {
                 }
             });
         };
-
         changeObjectStructure(user);
         return subKeyArr;
     };
 
-
+    // To get the values of the user object for setting in aggrid
     const processUserValues = (user) => {
         const flattenedUser = {};
-
         const changeObjectStructure = (obj, parentKey = '') => {
             Object.keys(obj).forEach((key) => {
                 const fullKey = parentKey ? `${parentKey} ${key}` : key;
@@ -74,36 +75,28 @@ const Table = () => {
                 }
             });
         };
-
         changeObjectStructure(user);
         return flattenedUser;
     };
 
-    console.log({ newOneAdded, users })
-
     useEffect(() => {
-        console.log("Users in Table: ", users);
         if (!hasRunOnce && users.length > 0) {
             const userKeys = processUserKeys(users[0]);
             userKeys.forEach((key) => {
                 addFieldToColDefs(key);
             });
             const flattenedUsers = users.map(user => processUserValues(user));
-            console.log("Flattened Users: ", flattenedUsers);
             setRowData(flattenedUsers);
             setHasRunOnce(true);
         } else if (newOneAdded) {
             const flattenedUsers = users.map(user => processUserValues(user));
-            console.log("Flattened Users: ", flattenedUsers);
             setRowData(flattenedUsers);
             isNewOneAdded(false);
         } else if (toDelete) {
             const flattenedUsers = users.map(user => processUserValues(user));
-            console.log("This block is triggered and we are in: ", flattenedUsers);
             setRowData(flattenedUsers);
             isNewOneAdded(false);
             setToDelete(false);
-            console.log(dataToDelete)
         }
     }, [users, hasRunOnce, newOneAdded, toDelete]);
 
@@ -119,15 +112,14 @@ const Table = () => {
 
     return (
         <div>
-            {/* <button type="button" className="btn btn-primary m-2 ms-0" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                Add User
-            </button> */}
+            {/* Button to add new user */}
             <Button variant="primary" className="btn btn-primary m-2 ms-0" onClick={() => {
                 setModel(true)
                 setCurrentMode('add');
             }}>
                 Add User
             </Button>
+            {/* Model to add new user */}
             <Model />
             <div className="ag-theme-quartz-dark" style={{ height: 500 }}>
                 <AgGridReact

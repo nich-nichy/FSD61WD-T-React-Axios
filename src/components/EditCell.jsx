@@ -3,6 +3,8 @@ import Model from './Model'
 import { UserContext } from '../context/UserContext';
 import { FaPen } from "react-icons/fa";
 
+// Edit a user
+
 const EditCellRenderer = (props) => {
     const { setModel, setDataToEdit, setCurrentMode } = useContext(UserContext);
     const handleEdit = async () => {

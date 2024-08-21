@@ -2,6 +2,8 @@ import { createContext, useState } from 'react';
 
 export const UserContext = createContext();
 
+// For maintaining global state
+
 const UserProvider = ({ children }) => {
     const [users, setUsers] = useState([]);
     const [showModel, setModel] = useState(false);

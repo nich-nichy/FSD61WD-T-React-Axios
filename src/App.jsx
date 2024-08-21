@@ -1,14 +1,12 @@
 import './App.css'
-import { useState } from 'react';
 import Table from './components/Table';
 import UserProvider from './context/UserContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 function App() {
-  const [show, setShow] = useState(false);
-  console.log(show)
   return (
+    // App Component followed by context provider
     <UserProvider>
       <>
         <div className="poppins-medium m-5 mt-3">
