@@ -12,7 +12,7 @@ import Model from './Model';
 // Table component uses AG GRID - React Grid
 
 const Table = () => {
-    const { users, setUsers, setModel, newOneAdded, isNewOneAdded, currentMode, setCurrentMode, setDataToEdit, toDelete, setToDelete, dataToDelete, setDataToDelete } = useContext(UserContext);
+    const { users, setUsers, setModel, newOneAdded, isNewOneAdded, dataToEdit, setCurrentMode, setDataToEdit, toDelete, setToDelete, dataToDelete, setDataToDelete } = useContext(UserContext);
     const initialColDefs = [
         {
             field: "edit", width: 70, pinned: "right", cellRenderer: EditCellRenderer
@@ -24,8 +24,6 @@ const Table = () => {
     const [rowData, setRowData] = useState(initialRowData);
     const [colDefs, setColDefs] = useState(initialColDefs);
 
-    console.log({ users })
-
     useEffect(() => {
         const fetchedData = async () => {
             const data = await userFunctions.fetchUsers(users);
@@ -36,19 +34,25 @@ const Table = () => {
         fetchedData();
     }, []);
 
+    const camelCaseToSpace = (str) => {
+        // Regex from https://stackoverflow.com
+        return str.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase();
+    };
+
     // To get the keys of the user object for setting in aggrid
     const processUserKeys = (user) => {
         const subKeyArr = [];
         const changeObjectStructure = (obj, parentKey = '') => {
             Object.keys(obj).forEach((key) => {
-                const fullKey = parentKey ? `${parentKey} ${key}` : key;
+                const formattedKey = camelCaseToSpace(key);
+                const fullKey = parentKey ? `${parentKey} ${formattedKey}` : formattedKey;
                 if (typeof obj[key] === 'object' && obj[key] !== null) {
                     if (key.toLowerCase().includes("geo")) {
                         return;
                     }
                     changeObjectStructure(obj[key], fullKey);
                 } else {
-                    if (fullKey.toLowerCase() === "company bs") {
+                    if (fullKey.toLowerCase().includes("zipcode") || fullKey.toLowerCase() === "company bs") {
                         return;
                     }
                     subKeyArr.push(fullKey);
@@ -64,14 +68,15 @@ const Table = () => {
         const flattenedUser = {};
         const changeObjectStructure = (obj, parentKey = '') => {
             Object.keys(obj).forEach((key) => {
-                const fullKey = parentKey ? `${parentKey} ${key}` : key;
+                const formattedKey = camelCaseToSpace(key);
+                const fullKey = parentKey ? `${parentKey} ${formattedKey}` : formattedKey;
                 if (typeof obj[key] === 'object' && obj[key] !== null) {
                     if (key.toLowerCase().includes("geo")) {
                         return;
                     }
                     changeObjectStructure(obj[key], fullKey);
                 } else {
-                    if (fullKey.toLowerCase() === "company bs") {
+                    if (fullKey.toLowerCase().includes("zipcode") || fullKey.toLowerCase() === "company bs") {
                         return;
                     }
                     flattenedUser[fullKey] = obj[key];
@@ -82,25 +87,28 @@ const Table = () => {
         return flattenedUser;
     };
 
+
     useEffect(() => {
-        const updateRowData = () => {
+        const setData = (flag) => {
             const flattenedUsers = users.map(user => processUserValues(user));
-            console.log({ flattenedUsers }, 'from row data');
             setRowData(flattenedUsers);
+            isNewOneAdded(flag);
         };
         if (!hasRunOnce && users.length > 0) {
             const userKeys = processUserKeys(users[0]);
             userKeys.forEach((key) => {
                 addFieldToColDefs(key);
             });
-            updateRowData();
+            setData(true);
             setHasRunOnce(true);
-        } else if (newOneAdded || toDelete) {
-            updateRowData();
-            isNewOneAdded(false);
-            setToDelete(false);
+        } else if (newOneAdded || (dataToEdit && Object.keys(dataToEdit).length > 0) || toDelete) {
+            setData(false);
+            if (toDelete) {
+                setToDelete(false);
+            }
         }
-    }, [users, hasRunOnce, newOneAdded, toDelete]);
+    }, [users, hasRunOnce, newOneAdded, toDelete, dataToEdit]);
+
 
     const addFieldToColDefs = (fieldName) => {
         setColDefs(prev => [...prev, { field: fieldName }]);

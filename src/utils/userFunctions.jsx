@@ -10,7 +10,6 @@ class UserFunctions {
         try {
             if (!users || users.length === 0) {
                 const readUsers = await axios.get(providedUrl);
-                console.log(readUsers.data, "from function");
                 return readUsers.data;
             }
             return users;
@@ -30,8 +29,10 @@ class UserFunctions {
     // For updating the data from the API (UPDATE)
     updateUser = async (id, toUpdate) => {
         try {
-            const updateUsers = await axios.put(`${providedUrl}/${id}`, toUpdate);
-            return updateUsers;
+            if (toUpdate && Object.keys(toUpdate).length > 0) {
+                const updateUsers = await axios.put(`${providedUrl}/${id}`, toUpdate);
+                return updateUsers;
+            }
         } catch (error) {
             return error;
         }

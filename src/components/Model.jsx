@@ -32,17 +32,18 @@ const Model = () => {
                 <Modal.Body>
                     <Formik
                         initialValues={{
-                            name: `${checkMode ? "" : dataToEdit?.name}`,
-                            username: `${checkMode ? "" : dataToEdit?.username}`,
-                            email: `${checkMode ? "" : dataToEdit?.email}`,
-                            addressStreet: `${checkMode ? "" : dataToEdit['address street']}`,
-                            addressSuite: `${checkMode ? "" : dataToEdit['address suite']}`,
-                            addressCity: `${checkMode ? "" : dataToEdit['address city']}`,
-                            phone: `${checkMode ? "" : dataToEdit?.phone}`,
-                            website: `${checkMode ? "" : dataToEdit?.website}`,
-                            companyName: `${checkMode ? "" : dataToEdit['company name']}`,
-                            companyCatchPhrase: `${checkMode ? "" : dataToEdit['company catchPhrase']}`
+                            name: checkMode ? "" : dataToEdit?.name,
+                            username: checkMode ? "" : dataToEdit?.username,
+                            email: checkMode ? "" : dataToEdit?.email,
+                            addressStreet: checkMode ? "" : dataToEdit?.addressStreet || dataToEdit?.['address street'],
+                            addressSuite: checkMode ? "" : dataToEdit?.addressSuite || dataToEdit?.['address suite'],
+                            addressCity: checkMode ? "" : dataToEdit?.addressCity || dataToEdit?.['address city'],
+                            phone: checkMode ? "" : dataToEdit?.phone,
+                            website: checkMode ? "" : dataToEdit?.website,
+                            companyName: checkMode ? "" : dataToEdit?.companyName || dataToEdit?.['company name'],
+                            companyCatchPhrase: checkMode ? "" : dataToEdit?.['company catch phrase']
                         }}
+
                         validationSchema={Yup.object().shape({
                             name: Yup.string()
                                 .min(2, 'Too Short!')
@@ -70,7 +71,7 @@ const Model = () => {
                         onSubmit={async (values) => {
                             // console.log(values);
                             try {
-                                if (checkMode) {
+                                if (currentMode?.toLowerCase()?.includes('add')) {
                                     const response = await userFunctions.addUser(values);
                                     const { data } = response;
                                     Swal.fire({
@@ -93,26 +94,31 @@ const Model = () => {
                                         isNewOneAdded(true);
                                     });
                                 } else if (currentMode?.toLowerCase()?.includes('edit')) {
-                                    const response = await userFunctions.updateUser(dataToEdit.id, values);
-                                    const { data } = response;
-                                    Swal.fire({
-                                        title: 'Form Submitted!',
-                                        text: 'User Edited Successfully!',
-                                        icon: 'success',
-                                        confirmButtonText: 'OK'
-                                    }).then(() => {
-                                        setUsers((oldData) => {
-                                            const newData = oldData.map((user) => {
-                                                if (user.id === dataToEdit.id) {
-                                                    return { ...user, ...data };
-                                                }
-                                                return user;
-                                            });
-                                            return newData;
+                                    try {
+                                        const response = await userFunctions.updateUser(dataToEdit.id, values);
+                                        const { data } = response;
+                                        setDataToEdit(data);
+                                        Swal.fire({
+                                            title: 'Form Submitted!',
+                                            text: 'User Edited Successfully!',
+                                            icon: 'success',
+                                            confirmButtonText: 'OK'
+                                        }).then(() => {
+                                            setUsers((oldData) =>
+                                                oldData.map((user) => user?.id === data?.id ? { ...user, ...data } : user)
+                                            );
+                                            handleClose();
+                                            isNewOneAdded(true);
                                         });
-                                        handleClose();
-                                        isNewOneAdded(true);
-                                    });
+                                    } catch (error) {
+                                        Swal.fire({
+                                            title: 'Error',
+                                            text: 'An error occurred while updating the user.',
+                                            icon: 'error',
+                                            confirmButtonText: 'OK'
+                                        });
+                                    }
+
                                 }
                             } catch (error) {
                                 Swal.fire({
